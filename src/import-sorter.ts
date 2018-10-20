@@ -14,8 +14,21 @@ export class ImportSorter {
         const editor = window.activeTextEditor;
         const selection = editor.selection;
 
+        // check if more than one line is selected
+        if (selection.start.line !== selection.end.line) {
+            window.showErrorMessage(`More than one line was selected`);
+            return;
+        }
+
         // just to test functionality out
         const lineToSort = editor.document.lineAt(selection.start.line);
+
+        // check if line contains import
+        const isImport = lineToSort.text.includes('import');
+        if (!isImport) {
+            window.showErrorMessage(`Selected line does not seem to have an import statement`);
+            return;
+        }
 
         const sortedLine = this.sortImportLineObject(lineToSort);
         editor.edit(builder => {
@@ -40,7 +53,7 @@ export class ImportSorter {
         const firstCapturingGroup = result ? result[1] : '';
 
         // string to array
-        const groupToSort = firstCapturingGroup.split(',');
+        const groupToSort = firstCapturingGroup.split(',').map(item => item.trim());
 
         // avoid mutating
         const sortedGroup = groupToSort.slice(0);
@@ -49,7 +62,7 @@ export class ImportSorter {
         });
 
         // add curly brackets
-        const sortedLine = `{${sortedGroup.toString()}}`;
+        const sortedLine = `{ ${sortedGroup.join(', ')} }`;
 
         return inputLine.replace(regex, sortedLine);
     }
