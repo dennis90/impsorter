@@ -16,4 +16,4 @@ Initial release does not include a lot of functionality.
 
 ## Release Notes
 
-* Please see [CHANGELOG](CHANGELOG.md) for latest release information.
+* Please see CHANGELOG for latest release information.
