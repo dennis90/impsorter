@@ -4,7 +4,7 @@ Extension for sorting imports.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+* Sort imports on one line selection.
 
 ## Extension Settings
 
