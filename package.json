@@ -11,7 +11,9 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.sortImportLine"
+        "onCommand:extension.sortImportLine",
+        "onCommand:extension.sortImportLinesOnWordGrouping",
+        "onCommand:extension.sortImportLinesOnMaxCharWidth"
     ],
     "main": "./out/extension",
     "contributes": {
@@ -19,6 +21,14 @@
             {
                 "command": "extension.sortImportLine",
                 "title": "Sort Imports: Sort selected line"
+            },
+            {
+                "command": "extension.sortImportLinesOnWordGrouping",
+                "title": "Sort Imports: N number of import bindings per line"
+            },
+            {
+                "command": "extension.sortImportLinesOnMaxCharWidth",
+                "title": "Sort Imports: Not exceeding maximum line length"
             }
         ]
     },

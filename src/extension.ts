@@ -7,16 +7,20 @@ export function activate(context: ExtensionContext) {
 
     const importSorter = new ImportSorter();
 
-    // The command has been defined in the package.json file
-    // The commandId parameter must match the command field in package.json
-    const disposable = commands.registerCommand('extension.sortImportLine', () => {
-
-        importSorter.sortActiveDocumentImportsCommand();
-
+    const sortImportLine = commands.registerCommand('extension.sortImportLine', () => {
+        importSorter.sortImportLineCommand();
+    });
+    const sortImportLinesOnWordGrouping = commands.registerCommand('extension.sortImportLinesOnWordGrouping', () => {
+        importSorter.sortImportLinesOnWordGroupingCommand();
+    });
+    const sortImportLinesOnMaxCharWidth = commands.registerCommand('extension.sortImportLinesOnMaxCharWidth', () => {
+        importSorter.sortImportLinesOnMaxCharWidthCommand();
     });
 
     context.subscriptions.push(importSorter);
-    context.subscriptions.push(disposable);
+    context.subscriptions.push(sortImportLine);
+    context.subscriptions.push(sortImportLinesOnWordGrouping);
+    context.subscriptions.push(sortImportLinesOnMaxCharWidth);
 }
 
 // this method is called when extension is deactivated
