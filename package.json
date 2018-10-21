@@ -1,20 +1,30 @@
 {
     "name": "impsorter",
-    "displayName": "impsorter",
-    "description": "Sort your imports",
+    "displayName": "impsorter - Arrange imports",
+    "description": " Extension to help you sort your import statement in an easy convenient way.",
     "version": "1.0.0",
     "publisher": "erhise",
-    "engines": {
-        "vscode": "^1.28.0"
-    },
+    "license": "MIT",
     "categories": [
+        "Formatters",
         "Other"
+    ],
+    "keywords": [
+        "sort imports",
+        "order imports",
+        "sort",
+        "order",
+        "selection"
+
     ],
     "activationEvents": [
         "onCommand:extension.sortImportLine",
         "onCommand:extension.sortImportLinesOnWordGrouping",
         "onCommand:extension.sortImportLinesOnMaxCharWidth"
     ],
+    "engines": {
+        "vscode": "^1.28.0"
+    },
     "main": "./out/extension",
     "contributes": {
         "commands": [
