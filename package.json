@@ -9,13 +9,13 @@
         "Formatters",
         "Other"
     ],
+    "icon": "https://raw.githubusercontent.com/erhise/impsorter/master/assets/vs-impsorter-logo.png",
     "keywords": [
         "sort imports",
         "order imports",
         "sort",
         "order",
         "selection"
-
     ],
     "activationEvents": [
         "onCommand:extension.sortImportLine",
