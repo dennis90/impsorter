@@ -2,14 +2,14 @@
     "name": "impsorter",
     "displayName": "impsorter - Arrange imports",
     "description": " Extension to help you sort your import statement in an easy convenient way.",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "publisher": "erhise",
     "license": "MIT",
     "categories": [
         "Formatters",
         "Other"
     ],
-    "icon": "https://raw.githubusercontent.com/erhise/impsorter/master/assets/vs-impsorter-logo.png",
+    "icon": "assets/vs-impsorter-logo.png",
     "keywords": [
         "sort imports",
         "order imports",
