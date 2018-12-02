@@ -20,7 +20,8 @@ Extension Settings to be included later.
 ## Known Issues
 
 This extension is still in development, initial release does not include a lot of functionality nor flexibilty.
+Todo: Create list of ideas to implement.
 
 ## Release Notes
 
-* Please see CHANGELOG for latest release information.
+* Latest changes are referenced in the changelog.
