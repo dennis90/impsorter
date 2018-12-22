@@ -1,65 +1,45 @@
-import { Range, Selection, TextEditor, TextLine, window } from 'vscode';
+import { Range, Selection, TextEditor, window, WorkspaceConfiguration } from 'vscode';
 
 enum SortConfig {
     SingleLine,
-    MultiLine
+    MultiLine,
+    WordGroup,
+    MaxWidth,
+}
+
+interface Options {
+    tabWidth: number;
+    trailingComma: boolean;
+    inputPerLine: number;
+    lineMaxWidth: number;
 };
 
 export class ImportSorter {
 
+    private defaultTabWidth = this.config.defaultTabWidth;
+    private trailingComma = this.config.trailingComma;
+    private inputPerLine = this.config.inputPerLine;
+    private lineMaxWidth = this.config.lineMaxWidth;
+
+    constructor(private config: WorkspaceConfiguration) {}
+
+    // extension.sortImportLine
     public sortImportLine(): void {
-        const activeEditor = this.checkEditorAndSelection(
-            window.activeTextEditor, (error: string) => {
-                window.showErrorMessage(error);
-                return;
-            }
-        );
-
-        if (activeEditor === undefined) { return; }
-
-        const [editor, selection] = activeEditor;
-
-        if (isMultiline(selection)) {
-            window.showErrorMessage(`More than one line was selected`);
-            return;
-        }
-
-        const lineToSort = editor.document.lineAt(selection.start.line);
-
-        if (!isImportStatement(lineToSort)) {
-            window.showErrorMessage(`Selected line does not seem to have an import statement`);
-            return;
-        }
-
-        const sortedLine = sortImportSelection(lineToSort.text, SortConfig.SingleLine);
-        editor.edit(builder => builder.replace(lineToSort.range, sortedLine));
-        window.showInformationMessage(`Line: ${selection.start.line + 1} got sorted.`);
+        this.handleSorting(SortConfig.SingleLine);
     }
-
-
+    
+    // extension.sortImportLinesOnWordGroupingCommand
     public sortImportLinesOnWordGroupingCommand(): void {
-        const activeEditor = this.checkEditorAndSelection(
-            window.activeTextEditor, (error: string) => {
-                window.showErrorMessage(error);
-                return;
-            }
-        );
-
-        if (activeEditor !== undefined) {
-            const [editor, selection] = activeEditor;
-            const selectionEndLine = editor.document.lineAt(selection.end.line);
-
-            const range = new Range(selection.start.line, 0, selection.end.line, selectionEndLine.range.end.character);
-            const input = editor.document.getText(range);
-
-            const sortedImport = sortImportSelection(input, SortConfig.MultiLine);
-            editor.edit(builder => builder.replace(range, sortedImport));
-            window.showInformationMessage(`${selection.end.line - selection.start.line + 1} number of lines got sorted.`);
-        }
+        this.handleSorting(SortConfig.WordGroup);
     }
-
-
+    
+    // extension.sortImportLinesOnMaxCharWidthCommand
     public sortImportLinesOnMaxCharWidthCommand(): void {
+        this.handleSorting(SortConfig.MaxWidth);
+    }
+
+    // TODO: break up to not handle messaging
+    private handleSorting(format: SortConfig): void {
         const activeEditor = this.checkEditorAndSelection(
             window.activeTextEditor, (error: string) => {
                 window.showErrorMessage(error);
@@ -74,12 +54,22 @@ export class ImportSorter {
             const range = new Range(selection.start.line, 0, selection.end.line, selectionEndLine.range.end.character);
             const input = editor.document.getText(range);
 
-            const sortedImport = sortImportSelection(input, SortConfig.MultiLine);
+            if (!isImportStatement(input)) {
+                window.showErrorMessage(`Selection does not seem to contain import statement`);
+                return;
+            }
+
+            const config: Options = {
+                tabWidth: this.defaultTabWidth,
+                trailingComma: this.trailingComma,
+                inputPerLine: this.inputPerLine,
+                lineMaxWidth: this.lineMaxWidth
+            };
+            const sortedImport = sortImportSelection(input, format, config);
             editor.edit(builder => builder.replace(range, sortedImport));
             window.showInformationMessage(`${selection.end.line - selection.start.line + 1} number of lines got sorted.`);
         }
     }
-
 
     // Make sure editor is active and that there is a selection.
     private checkEditorAndSelection(editor: TextEditor | undefined, cb: (err: string) => void): [TextEditor, Selection] | void {
@@ -92,24 +82,20 @@ export class ImportSorter {
 
 
 // ---------- HELP FUNCTIONS ------------------------------------------
-function isMultiline(selection: Selection): boolean {
-    return selection.start.line !== selection.end.line;
+function isImportStatement(selection: string): boolean {
+    return RegExp(`\\bimport\\b(.|\\s)*\\bfrom\\b`, 'm').test(selection);
 }
 
-function isImportStatement(selection: TextLine): boolean {
-    return selection.text.includes('import');
-}
-
-function sortImportSelection(selection: string, format: SortConfig): string {
+function sortImportSelection(selection: string, format: SortConfig, options: Options): string {
     return selection.replace(/\{[^.]*?\}/gm, exp => {
         const normalized = exp.replace(/\s/g, "");
         const match = RegExp(/\{(.*?)\}/,'g').exec(normalized);
         if (match === null || match[1] === undefined) {
             return exp;
         }
-        const arrayToSort = match[1].split(',');
+        const arrayToSort = match[1].split(',').filter(n => n);
         const sortedArray = sortArray(arrayToSort);
-        return formatArray(sortedArray, format);
+        return formatArray(sortedArray, format, options);
     });
 }
 
@@ -117,7 +103,12 @@ function sortArray(arr: string[]): string[] {
     return arr.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
 }
 
-function formatArray(arr: string[], format: SortConfig): string {
+function formatArray(
+    arr: string[],
+    format: SortConfig,
+    options: Options
+): string {
+    const { tabWidth, trailingComma, inputPerLine, lineMaxWidth } = options;
     let formattedArray;
     switch (format) {
         case SortConfig.SingleLine: {
@@ -132,14 +123,76 @@ function formatArray(arr: string[], format: SortConfig): string {
 
         case SortConfig.MultiLine: {
             formattedArray = arr.map((entry, index) => {
-                entry = '\n    ' + entry;
+                entry = '\n' + ' '.repeat(tabWidth) + entry;
                 return entry;
             });
+            if (trailingComma === true) {
+                return `{${formattedArray},\n}`;
+            }
             return `{${formattedArray}\n}`;
+        }
+
+        case SortConfig.WordGroup: {
+            return `{${formatLine(arr, inputPerLine, tabWidth, trailingComma)}\n}`;
+        }
+
+        case SortConfig.MaxWidth: {
+            return `{\n${formatLineWidth(arr, lineMaxWidth, tabWidth, trailingComma)}\n}`;
         }
     
         default: {
             return arr.toString();
         }
     }
+}
+
+function formatLine(
+    arr: string[],
+    perRow: number,
+    tabWidth: number,
+    trailingComma: boolean
+) {
+    let res: string = '';
+
+    for (let i = 0; i < arr.length; i++) {
+        const newRow = i % perRow;
+        if (newRow === 0) {
+            res += '\n' + ' '.repeat(tabWidth);
+        }
+        res += arr[i];
+        if (i !== arr.length - 1) {
+            res += ', ';
+        }
+        if (i === arr.length - 1 && trailingComma === true) {
+            res += ',';
+        }
+    }
+    return res;
+}
+
+function formatLineWidth(
+    arr: string[],
+    maxWidth: number,
+    tabWidth: number,
+    trailingComma: boolean
+) {
+    let lineWidth = tabWidth;
+    let res: string = ' '.repeat(tabWidth);
+
+    for (let i = 0; i < arr.length; i++) {
+        const currentLength = arr[i].length;
+        if (lineWidth + currentLength > maxWidth && i !== 0) {
+            res += '\n' + ' '.repeat(tabWidth);
+            lineWidth = tabWidth;
+        }
+        res += arr[i];
+        if (i !== arr.length - 1) {
+            res += ', ';
+        }
+        if (i === arr.length - 1 && trailingComma === true) {
+            res += ',';
+        }
+        lineWidth += currentLength + 2;
+    }
+    return res;
 }

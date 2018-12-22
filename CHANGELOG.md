@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.2.0 (2018-12-22)
+- Add user preference settings
+- Change displayname of commands
+
 ## 1.1.0 (2018-10-22)
 - Sort multiple lines imports.
 - Group import regarding on maximum line width.

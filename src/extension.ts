@@ -1,9 +1,10 @@
-import { commands, ExtensionContext } from 'vscode';
+import { commands, ExtensionContext, workspace } from 'vscode';
 
 import { ImportSorter } from './import-sorter';
 
 export function activate(ctx: ExtensionContext) {
-    const importSorter = new ImportSorter();
+    const config = workspace.getConfiguration('impsorter');
+    const importSorter = new ImportSorter(config);
 
     ctx.subscriptions.push(commands.registerCommand(
         'extension.sortImportLine',

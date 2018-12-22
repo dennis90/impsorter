@@ -2,7 +2,7 @@
     "name": "impsorter",
     "displayName": "impsorter - Arrange imports",
     "description": " Help you sort your import statements",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "publisher": "erhise",
     "license": "MIT",
     "categories": [
@@ -30,17 +30,43 @@
         "commands": [
             {
                 "command": "extension.sortImportLine",
-                "title": "Sort Imports: Sort selected line"
+                "title": "Sort Imports: One line import"
             },
             {
                 "command": "extension.sortImportLinesOnWordGrouping",
-                "title": "Sort Imports: N number of import bindings per line"
+                "title": "Sort Imports: Maximum inputs per line"
             },
             {
                 "command": "extension.sortImportLinesOnMaxCharWidth",
-                "title": "Sort Imports: Not exceeding maximum line length"
+                "title": "Sort Imports: Limit on max width"
             }
-        ]
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "impsorter configuration",
+            "properties": {
+                "impsorter.defaultTabWidth": {
+                    "type": "number",
+                    "default": 4,
+                    "description": "Prefered tabwidth"
+                },
+                "impsorter.trailingComma": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Specifies if trailing-comma should be used or not"
+                },
+                "impsorter.inputPerLine": {
+                    "type": "number",
+                    "default": 4,
+                    "description": "Specifies number of inputs per line when command sortImportLinesOnWordGrouping is used"
+                },
+                "impsorter.lineMaxWidth": {
+                    "type": "number",
+                    "default": 80,
+                    "description": "Specifies prefered max width on import lines"
+                }
+            }
+        }
     },
     "scripts": {
         "postinstall": "node ./node_modules/vscode/bin/install",
