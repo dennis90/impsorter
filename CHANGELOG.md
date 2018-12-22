@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.2.1 (2018-12-22)
+- Add sort imports one per line
+
 ## 1.2.0 (2018-12-22)
 - Add user preference settings
 - Change displayname of commands

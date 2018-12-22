@@ -2,7 +2,7 @@
     "name": "impsorter",
     "displayName": "impsorter - Arrange imports",
     "description": " Help you sort your import statements",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "publisher": "erhise",
     "license": "MIT",
     "categories": [
@@ -19,6 +19,7 @@
     ],
     "activationEvents": [
         "onCommand:extension.sortImportLine",
+        "onCommand:extension.sortImportsPerLine",
         "onCommand:extension.sortImportLinesOnWordGrouping",
         "onCommand:extension.sortImportLinesOnMaxCharWidth"
     ],
@@ -30,7 +31,11 @@
         "commands": [
             {
                 "command": "extension.sortImportLine",
-                "title": "Sort Imports: One line import"
+                "title": "Sort Imports: Line import"
+            },
+            {
+                "command": "extension.sortImportsPerLine",
+                "title": "Sort Imports: One import per line"
             },
             {
                 "command": "extension.sortImportLinesOnWordGrouping",

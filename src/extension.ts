@@ -14,6 +14,13 @@ export function activate(ctx: ExtensionContext) {
     ));
 
     ctx.subscriptions.push(commands.registerCommand(
+        'extension.sortImportsPerLine',
+        () => {
+            importSorter.sortImportsPerLine();
+        }
+    ));
+
+    ctx.subscriptions.push(commands.registerCommand(
         'extension.sortImportLinesOnWordGrouping',
         () => {
             importSorter.sortImportLinesOnWordGroupingCommand();

@@ -8,7 +8,8 @@ You might think the structure of your imports are important (*no pun intended*).
 `vs-impsorter-extension` supports a number of commands for sorting import statements; these are acessible via the command menu `(<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>)` and may be bound to keyboard shortcuts in the normal way.
 
 ## Available commands
-* "Sort Imports: One line import"
+* "Sort Imports: Line import"
+* "Sort Imports: One import per line"
 * "Sort Imports: Maximum inputs per line"
 * "Sort Imports: Limit on max width"
 

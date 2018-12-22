@@ -27,6 +27,10 @@ export class ImportSorter {
     public sortImportLine(): void {
         this.handleSorting(SortConfig.SingleLine);
     }
+
+    public sortImportsPerLine(): void {
+        this.handleSorting(SortConfig.MultiLine);
+    }
     
     // extension.sortImportLinesOnWordGroupingCommand
     public sortImportLinesOnWordGroupingCommand(): void {
