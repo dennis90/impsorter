@@ -1,26 +1,31 @@
-'use strict';
 import { commands, ExtensionContext } from 'vscode';
 
 import { ImportSorter } from './import-sorter';
 
-export function activate(context: ExtensionContext) {
-
+export function activate(ctx: ExtensionContext) {
     const importSorter = new ImportSorter();
 
-    const sortImportLine = commands.registerCommand('extension.sortImportLine', () => {
-        importSorter.sortImportLineCommand();
-    });
-    const sortImportLinesOnWordGrouping = commands.registerCommand('extension.sortImportLinesOnWordGrouping', () => {
-        importSorter.sortImportLinesOnWordGroupingCommand();
-    });
-    const sortImportLinesOnMaxCharWidth = commands.registerCommand('extension.sortImportLinesOnMaxCharWidth', () => {
-        importSorter.sortImportLinesOnMaxCharWidthCommand();
-    });
+    ctx.subscriptions.push(commands.registerCommand(
+        'extension.sortImportLine',
+        () => {
+            importSorter.sortImportLine();
+        }
+    ));
 
-    context.subscriptions.push(importSorter);
-    context.subscriptions.push(sortImportLine);
-    context.subscriptions.push(sortImportLinesOnWordGrouping);
-    context.subscriptions.push(sortImportLinesOnMaxCharWidth);
+    ctx.subscriptions.push(commands.registerCommand(
+        'extension.sortImportLinesOnWordGrouping',
+        () => {
+            importSorter.sortImportLinesOnWordGroupingCommand();
+        }
+    ));
+
+    ctx.subscriptions.push(commands.registerCommand(
+        'extension.sortImportLinesOnMaxCharWidth',
+        () => {
+            importSorter.sortImportLinesOnMaxCharWidthCommand();
+        }
+    ));
+
 }
 
 // this method is called when extension is deactivated
